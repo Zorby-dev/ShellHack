@@ -1,0 +1,66 @@
+name: Publish Release
+on:
+  push:
+    tags:
+      - v*
+jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - name: Fetch tags
+        run: git fetch --tags --force
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1.1.0
+        with:
+          strip_v: true
+      - name: Generate changelog
+        id: changelog
+        uses: scottbrenner/generate-changelog-action@master
+        env:
+          REPO: ${{ github.repository }}
+      - name: Create release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          body: |
+            ${{ steps.changelog.outputs.changelog }}
+      - name: Update package.json version
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          include: package.json
+          find: '"version": "\S*"'
+          replace: '"version": "${{ steps.tag.outputs.tag }}"'
+      - name: Update userscript version
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          include: header.txt
+          find: '@version +\S*'
+          replace: '@version ${{ steps.tag.outputs.tag }}'
+      - name: Build
+        run: npm i && npm run build
+      - name: Upload userscript
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./dist/bundle.user.js
+          asset_name: ShellHack-${{ github.ref_name }}.user.js
+          asset_content_type: text/javascript
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
