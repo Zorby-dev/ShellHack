@@ -1,4 +1,5 @@
 node_modules
 dist
 res
+tmp
 package-lock.json
