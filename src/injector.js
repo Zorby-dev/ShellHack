@@ -47,10 +47,11 @@ export default function inject() {
                             function someFunctionWhichWillNeverBeUsedNow
                         `
                     )
-                    .replace(/((\w)=JSON\.parse\(\w\.data\))/, (a, b) => {
+                    /*.replace(/((\w)=JSON\.parse\(\w\.data\))/, (a, b) => {
                         const out = `${a};shellHack.log("WS MESSAGE", ${b})`;
                         return out;
-                    });
+                    })
+                    .replace("ct.prototype.fire = function () {", "ct.prototype.fire = function () {console.log(\"!!!Fired!!!\");console.log(this.actor);")*/;
             }
     
             return super.response;
