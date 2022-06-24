@@ -4,6 +4,9 @@ class ShellHack {
     static defaultConfig = {
         aimbotEnabled: false,
         espEnabled: false,
+        esp: {
+            raysEnabled: true
+        }
     };
 
     constructor() {
@@ -22,6 +25,7 @@ class ShellHack {
         for (const menu of this.menus) {
             menu.update();
         }
+        this.settings.update();
         localStorage.setItem("shellHackConfig", JSON.stringify(this.config));
     }
 }
@@ -139,29 +143,138 @@ class HackMenu {
 }
 
 class HackSettings {
+
+    createOpenButton() {
+        let button = document.createElement("input");
+        button.setAttribute("type", "image");
+        button.setAttribute("src", "img/ico_nav_settings.png");
+        button.className = "account_icon roundme_sm";
+        button.style.color = "red";
+        button.style.backgroundColor = "black";
+        
+        button.addEventListener("click", () => {
+            const overlay = document.getElementById("SHOverlay");
+            const settings = document.getElementById("SHSettings")
+            overlay.style.display = "block";
+            settings.style = "";
+        })
+
+        this.openButtons.push(button)
+
+        return button;
+    }
+
     constructor() {
-        const hackButton = document.createElement("button");
-        hackButton.id = "hack_button";
-        hackButton.className = "ss_bigtab bevel_blue ss_marginright";
-        hackButton.innerHTML = `
+        window.shellHack.settings = this;
+
+        let overlay = document.createElement("div")
+        overlay.id = "SHOverlay"
+        overlay.style.position = "absolute"
+        overlay.style.top = "0"
+        overlay.style.left = "0"
+        overlay.style.right = "0"
+        overlay.style.bottom = "0"
+        overlay.style.backgroundColor = "rgba(0, 0, 0, 0.7)"
+        overlay.style.zIndex = "42069"
+        overlay.style.display = "none"
+        document.body.appendChild(overlay)
+
+        let settings = document.createElement("div")
+        settings.id = "SHSettings"
+        settings.style = "display: none;"
+
+        const espEnabled = toggle(window.shellHack.config.espEnabled);
+        const espRaysEnabled = toggle(window.shellHack.config.esp.raysEnabled);
+        settings.innerHTML = `
             <style>
-                #hack_button h3
+                #SHSettings {
+                    display: flex;
+                    flex-direction: column;
+
+                    width: 70%;
+                    height: 70%;
+                    margin: auto;
+                    margin-top: 100px;
+                    padding: 20px;
+                    
+                    background-color: black;
+                    color: white;
+                }
+                
+                #SHSettings .title {
+                    width: 100%;
+                    margin-bottom: 50px;
+                    text-align: center;
+                    font-size: 3em;
+                    font-weight: bold;
+                    color: red;
+                }
+
+                #SHSettings .category {
+                    font-size: 2em;
+                    margin-bottom: 10px;
+                }
+
+                #SHSettings button {
+                    border-radius: 5px;
+                    font-size: 1em;
+                }
+
+                #SHSettings button.ON {
+                    background-color: green;
+                }
+
+                #SHSettings button.OFF {
+                    background-color: red;
+                }
             </style>
-            <h3 style="margin: 0; padding: 0; color: var(--ss-blue2)">HACK</h3>
+            <span class="title">ShellHack Settings <button>[X]</button></span>
+            <span class="category esp">ESP - <button class="${espEnabled}">${espEnabled}</button></span>
+            <ul>
+                <li class="esp-rays">Show rays - <button class="${espRaysEnabled}">${espRaysEnabled}</button></li>
+            </ul>
         `
-        hackButton.onclick = () => {
-            for (const button of document.getElementById("horizontalTabs").children) {
-                button.classList.remove("selected");
-            }
-            hackButton.classList.add("selected");
-            hackButton.querySelector("h3").style.color = "var(--ss-white)"
+        settings.querySelector(".title button").addEventListener("click", () => {
+            const overlay = document.getElementById("SHOverlay");
+            const settings = document.getElementById("SHSettings")
+            overlay.style.display = "none";
+            settings.style = "display: none;";
+        })
+        settings.querySelector(".category.esp button").addEventListener("click", () => {
+            window.shellHack.config.espEnabled =
+                !window.shellHack.config.espEnabled;
+            window.shellHack.update();
+        })
+        settings.querySelector(".esp-rays button").addEventListener("click", () => {
+            window.shellHack.config.esp.raysEnabled =
+                !window.shellHack.config.esp.raysEnabled;
+            window.shellHack.update();
+        })
+        overlay.appendChild(settings)
+
+        this.openButtons = [];
+        const cornerButtons = document.querySelectorAll("#corner-buttons");
+        for (const x of cornerButtons) {
+            const button = this.createOpenButton()
+            x.appendChild(button)
         }
-        document.getElementById("horizontalTabs").prepend(hackButton);
+    }
+
+    update() {
+        const settings = document.getElementById("SHSettings")
+        
+        const espEnableButton = settings.querySelector(".category.esp button")
+        espEnableButton.className = toggle(window.shellHack.config.espEnabled)
+        espEnableButton.innerText = toggle(window.shellHack.config.espEnabled)
+
+        const espRaysEnableButton = settings.querySelector(".esp-rays button")
+        espRaysEnableButton.className = toggle(window.shellHack.config.esp.raysEnabled)
+        espRaysEnableButton.innerText = toggle(window.shellHack.config.esp.raysEnabled)
     }
 }
 
 function onLoad() {
-    document.getElementById("panel_front_news").remove();
+    document.querySelector("#panel_front_news .house-small").remove();
     document.getElementById("adBlockerVideo").remove();
     document.getElementById("spinnerOverlay").lastChild.remove();
     document.getElementById("videoAdContainer").remove();

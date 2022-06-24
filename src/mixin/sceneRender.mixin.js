@@ -99,7 +99,7 @@ export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar,
         player.sphere.visibility =
             window.shellHack.config.espEnabled && localPlayer !== player;
 
-        player.ray.visibility = localPlayer.playing && player.playing && (localPlayer.team === 0 || localPlayer.team !== player.team);
+        player.ray.visibility = window.shellHack.config.esp.raysEnabled && localPlayer.playing && player.playing && (localPlayer.team === 0 || localPlayer.team !== player.team);
     }
 
     for (let i = 0; i < window.shellHack.rays.length; i++) {
