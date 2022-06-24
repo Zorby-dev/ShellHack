@@ -10,12 +10,12 @@ module.exports = (cwd) => {
         .replace("// ==/UserScript==", `// @require file://${path.resolve(cwd, "dist", "dev", "bundle.user.js")}\n// ==/UserScript==`)
 
     mkdirSync(path.resolve(cwd, "tmp"))
-    writeFileSync(path.resolve(cwd, "tmp", "development.user.js"), header)
+    writeFileSync(path.resolve(cwd, "toolchain", "tmp", "development.user.js"), header)
 
-    spawn("chrome", [`file://${path.resolve(cwd, "tmp", "development.user.js")}`])
+    spawn("chrome", [`file://${path.resolve(cwd, "toolchain", "tmp", "development.user.js")}`])
 
     setTimeout(() => {
-        rmSync(path.resolve(cwd, "tmp"), { recursive: true, force: true });
+        rmSync(path.resolve(cwd, "toolchain", "tmp"), { recursive: true, force: true });
 
         console.log("Generated development script")
     }, 1000)
