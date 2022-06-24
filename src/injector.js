@@ -1,4 +1,5 @@
 import sceneRenderMixin from "./mixin/sceneRender.mixin";
+import getVariableNames from "./getVariableNames";
 
 export default function inject() {
     window.XMLHttpRequest = class extends window.XMLHttpRequest {
@@ -14,19 +15,7 @@ export default function inject() {
             if (this.isScript) {
                 const code = super.response;
 
-                const babylonVar = /new ([a-zA-Z]+)\.Vector3/.exec(code)[1];
-                const playersVar = /([^,]+)=\[\],{}/.exec(code)[1];
-                const localPlayerVar =
-                    /"fire":document.pointerLockElement&&([^&]+)&&/.exec(code)[1];
-                const sceneVar = /createMapCells\(([^,]+),/.exec(code)[1];
-                const cullFuncVar = /=([a-zA-Z]+)\(this\.mesh,\.[0-9]+\)/.exec(
-                    code
-                )[1];
-                const eventDispacherVar =
-                    /class\s+([\S]+)\s*\{\s*static\s+init\s*\(\s*\)\s*\{[\S]+\.inputs/.exec(
-                        code
-                    )[1];
-                const adBlockerErrorHandlerVar = /const (\S+)=\S+=>\{\S+\("F79520","Shell Shockers AIP","AIP video error/.exec(code)[1];
+                const { babylonVar, playersVar, localPlayerVar, sceneVar, cullFuncVar, eventDispacherVar, adBlockerErrorHandlerVar } = getVariableNames(code)
     
                 console.log("%cShellHack by Zorby", "color: red; font-size: 3em;");
                 console.log(
