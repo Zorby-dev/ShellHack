@@ -1,4 +1,5 @@
 import inject from "./injector";
+import { HSVtoRGB } from "./util";
 
 class ShellHack {
     static defaultConfig = {
@@ -14,6 +15,7 @@ class ShellHack {
         console.log(this.config);
         this.menus = [];
         this.rays = [];
+        this.hue = 0;
     }
 
     log(title, message) {
@@ -27,6 +29,19 @@ class ShellHack {
         }
         this.settings.update();
         localStorage.setItem("shellHackConfig", JSON.stringify(this.config));
+    }
+
+    onRender() {
+        window.shellHack.hue = window.shellHack.hue === 1 ? 0 : window.shellHack.hue + 0.01;
+    }
+
+    getRainbow() {
+        let rgb = HSVtoRGB(window.shellHack.hue, 1, 1);
+        return {
+            r: rgb.r / 255,
+            g: rgb.g / 255,
+            g: rgb.b / 255
+        }
     }
 }
 
@@ -196,7 +211,7 @@ class HackSettings {
                     margin: auto;
                     margin-top: 100px;
                     padding: 20px;
-                    
+
                     background-color: black;
                     color: white;
                 }

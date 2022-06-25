@@ -1,4 +1,6 @@
 export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar, eventDispacherVar) {
+    window.shellHack.onRender();
+
     const players = eval(playersVar);
     const localPlayer = eval(localPlayerVar);
     const BABYLON = eval(babylonVar);
@@ -8,8 +10,10 @@ export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar,
         "enemySphereMaterial",
         localPlayer.actor.scene
     );
+
+    let rainbow = window.shellHack.getRainbow();
     enemySphereMaterial.emissiveColor = enemySphereMaterial.diffuseColor =
-        new BABYLON.Color3(1, 0, 0);
+        new BABYLON.Color3(rainbow.r, rainbow.g, rainbow.b);
     enemySphereMaterial.wireframe = true;
     window.shellHack.enemySphereMaterial = enemySphereMaterial;
 
