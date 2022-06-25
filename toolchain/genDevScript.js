@@ -9,7 +9,7 @@ module.exports = (cwd) => {
         .replace("ShellHack", "ShellHack Development")
         .replace("// ==/UserScript==", `// @require file://${path.resolve(cwd, "dist", "dev", "bundle.user.js")}\n// ==/UserScript==`)
 
-    mkdirSync(path.resolve(cwd, "tmp"))
+    mkdirSync(path.resolve(cwd, "toolchain", "tmp"))
     writeFileSync(path.resolve(cwd, "toolchain", "tmp", "development.user.js"), header)
 
     spawn("chrome", [`file://${path.resolve(cwd, "toolchain", "tmp", "development.user.js")}`])
