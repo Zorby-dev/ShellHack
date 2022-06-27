@@ -3,10 +3,14 @@ import { HSVtoRGB } from "./util";
 
 class ShellHack {
     static defaultConfig = {
-        aimbotEnabled: false,
-        espEnabled: false,
+        aimbot: {
+            enabled: false
+        },
         esp: {
-            raysEnabled: true
+            enabled: false,
+            rainbowSpheres: false,
+            raysEnabled: true,
+            rainbowRays: false
         }
     };
 
@@ -123,24 +127,24 @@ class HackMenu {
         menu.className = "front_panel roundme_md hackmenu";
         menu.innerHTML = `
         <button class="ss_button btn_sm btn_blue bevel_blue aimbot-toggle" style="width: 90%;">AIMBOT: <span>${toggle(
-            window.shellHack.config.aimbotEnabled
+            window.shellHack.config.aimbot.enabled
         )}</span></button>
         <button class="ss_button btn_sm btn_blue bevel_blue esp-toggle" style="width: 90%;">ESP: <span>${toggle(
-            window.shellHack.config.espEnabled
+            window.shellHack.config.esp.enabled
         )}</span></button>`;
         parent.appendChild(menu);
         parent
             .querySelector(".hackmenu .aimbot-toggle")
             .addEventListener("click", () => {
-                window.shellHack.config.aimbotEnabled =
-                    !window.shellHack.config.aimbotEnabled;
+                window.shellHack.config.aimbot.enabled =
+                    !window.shellHack.config.aimbot.enabled;
                 window.shellHack.update();
             });
         parent
             .querySelector(".hackmenu .esp-toggle")
             .addEventListener("click", () => {
-                window.shellHack.config.espEnabled =
-                    !window.shellHack.config.espEnabled;
+                window.shellHack.config.esp.enabled =
+                    !window.shellHack.config.esp.enabled;
                 window.shellHack.update();
             });
         this.menu = menu;
@@ -149,10 +153,10 @@ class HackMenu {
 
     update() {
         this.menu.querySelector(".aimbot-toggle > span").innerText = toggle(
-            window.shellHack.config.aimbotEnabled
+            window.shellHack.config.aimbot.enabled
         );
         this.menu.querySelector(".esp-toggle > span").innerText = toggle(
-            window.shellHack.config.espEnabled
+            window.shellHack.config.esp.enabled
         );
     }
 }
@@ -182,6 +186,18 @@ class HackSettings {
     constructor() {
         window.shellHack.settings = this;
 
+        this.layout = {
+            esp: {
+                name: "ESP",
+                names: {
+                    raysEnabled: "Show rays",
+                    rainbowSpheres: "Rainbow hitboxes",
+                    rainbowRays: "Rainbow rays"
+                },
+                config: window.shellHack.config.esp
+            }
+        }
+
         let overlay = document.createElement("div")
         overlay.id = "SHOverlay"
         overlay.style.position = "absolute"
@@ -197,9 +213,6 @@ class HackSettings {
         let settings = document.createElement("div")
         settings.id = "SHSettings"
         settings.style = "display: none;"
-
-        const espEnabled = toggle(window.shellHack.config.espEnabled);
-        const espRaysEnabled = toggle(window.shellHack.config.esp.raysEnabled);
         settings.innerHTML = `
             <style>
                 #SHSettings {
@@ -244,27 +257,52 @@ class HackSettings {
                 }
             </style>
             <span class="title">ShellHack Settings <button>[X]</button></span>
-            <span class="category esp">ESP - <button class="${espEnabled}">${espEnabled}</button></span>
-            <ul>
-                <li class="esp-rays">Show rays - <button class="${espRaysEnabled}">${espRaysEnabled}</button></li>
-            </ul>
         `
+        for (const category in this.layout) {
+            const title = document.createElement("span")
+            title.className = "category " + category
+            let config = this.layout[category].config
+            const enabled = toggle(config.enabled)
+            title.innerHTML = `${this.layout[category].name} - <button class="${enabled}">${enabled}</button>`
+
+            title.querySelector("button").addEventListener("click", () => {
+                config.enabled =
+                    !config.enabled;
+                window.shellHack.update();
+            })
+
+            settings.appendChild(title)
+
+            const settingsList = document.createElement("ul")
+            settingsList.className = "config " + category
+
+            for (const setting in config) {
+                if (setting !== "enabled") {
+                    const settingItem = document.createElement("li")
+                    settingItem.className = setting
+                    const settingName = this.layout[category].names[setting]
+                    const settingEnabled = toggle(config[setting])
+                    settingItem.innerHTML = `${settingName ? settingName : setting} - <button class="${settingEnabled}">${settingEnabled}</button>`
+
+                    settingItem.querySelector("button").addEventListener("click", () => {
+                        config[setting] = !config[setting]
+                        window.shellHack.update();
+                    })
+
+                    settingsList.appendChild(settingItem)
+                }
+            }
+
+            settings.appendChild(settingsList)
+        }
+
         settings.querySelector(".title button").addEventListener("click", () => {
             const overlay = document.getElementById("SHOverlay");
             const settings = document.getElementById("SHSettings")
             overlay.style.display = "none";
             settings.style = "display: none;";
         })
-        settings.querySelector(".category.esp button").addEventListener("click", () => {
-            window.shellHack.config.espEnabled =
-                !window.shellHack.config.espEnabled;
-            window.shellHack.update();
-        })
-        settings.querySelector(".esp-rays button").addEventListener("click", () => {
-            window.shellHack.config.esp.raysEnabled =
-                !window.shellHack.config.esp.raysEnabled;
-            window.shellHack.update();
-        })
+
         overlay.appendChild(settings)
 
         this.openButtons = [];
@@ -278,13 +316,25 @@ class HackSettings {
     update() {
         const settings = document.getElementById("SHSettings")
         
-        const espEnableButton = settings.querySelector(".category.esp button")
-        espEnableButton.className = toggle(window.shellHack.config.espEnabled)
-        espEnableButton.innerText = toggle(window.shellHack.config.espEnabled)
+        for (const category of settings.querySelectorAll(".category")) {
+            const categoryName = category.classList.item(1)
+            const categoryEnabled = toggle(this.layout[categoryName].config.enabled)
+            const enabledButton = category.querySelector("button")
+            enabledButton.innerText = categoryEnabled
+            enabledButton.className = categoryEnabled
+        }
 
-        const espRaysEnableButton = settings.querySelector(".esp-rays button")
-        espRaysEnableButton.className = toggle(window.shellHack.config.esp.raysEnabled)
-        espRaysEnableButton.innerText = toggle(window.shellHack.config.esp.raysEnabled)
+        for (const config of settings.querySelectorAll(".config")) {
+            const configName = config.classList.item(1)
+
+            for (const settingItem of config.childNodes) {
+                const setting = settingItem.className
+                const settingEnabled = toggle(this.layout[configName].config[setting])
+                const settingEnabledButton = settingItem.querySelector("button")
+                settingEnabledButton.innerText = settingEnabled
+                settingEnabledButton.className = settingEnabled
+            }
+        }
     }
 }
 
