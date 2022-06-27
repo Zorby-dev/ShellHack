@@ -273,6 +273,8 @@ class HackSettings {
 
             settings.appendChild(title)
 
+            console.log(config)
+
             const settingsList = document.createElement("ul")
             settingsList.className = "config " + category
 
