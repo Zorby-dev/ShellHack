@@ -46,6 +46,7 @@ export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar,
     for (let i = 0; i < players.length; i++) {
         const player = players[i];
 
+
         if (!player || player == localPlayer) continue;
 
         if (player.sphere == null) {
@@ -77,7 +78,6 @@ export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar,
                 options,
                 player.actor.scene
             ));
-            ray.color = new BABYLON.Color3(1, 0, 0);
             ray.alwaysRenderAsActiveMesh = true;
             ray.renderingGroupId = 1;
 
@@ -104,7 +104,9 @@ export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar,
             window.shellHack.config.espEnabled && localPlayer !== player;
 
         player.ray.visibility = window.shellHack.config.esp.raysEnabled && localPlayer.playing && player.playing && (localPlayer.team === 0 || localPlayer.team !== player.team);
+        player.ray.color = new BABYLON.Color3(rainbow.r, rainbow.g, rainbow.b);
     }
+
 
     for (let i = 0; i < window.shellHack.rays.length; i++) {
         const ray = window.shellHack.rays[i];
