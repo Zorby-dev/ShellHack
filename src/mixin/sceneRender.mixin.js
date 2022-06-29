@@ -10,6 +10,18 @@ export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar,
         "enemySphereMaterial",
         localPlayer.actor.scene
     );
+    
+    /*let out = ""
+    for (const prop in localPlayer) {
+        out += `${prop}: ${localPlayer[prop]}\n`
+    }
+    console.log(out)*/
+    /*console.log(`Scoping: ${localPlayer.actor.scope}`)
+    console.log(`Zooming: ${localPlayer.actor.zoom}`)*/
+
+    /*localPlayer.yaw = window.shellHack.hue
+    localPlayer.pitch = 0*/
+     
 
     let rainbow = window.shellHack.getRainbow();
     enemySphereMaterial.emissiveColor = enemySphereMaterial.diffuseColor =
@@ -115,5 +127,35 @@ export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar,
             ray.dispose();
             window.shellHack.rays.splice(i, 1);
         }
+    }
+
+    if (localPlayer.actor.scope) {
+
+        // yaw: range [0, 2pi]
+        // pitch: straight = 0, range [-1.5 (up), 1.5 (down)]
+        let yaw = localPlayer.yaw;
+        let pitch = localPlayer.pitch;
+
+        // map size is around 14 units
+        let x = localPlayer.x;
+        let y = localPlayer.y;
+        let z = localPlayer.z;
+
+        let transform_z = Math.cos(yaw) * Math.cos(pitch)
+        let transform_x = Math.sin(yaw) * Math.cos(pitch)
+        let transform_y = -Math.sin(pitch)
+
+        let test = BABYLON.MeshBuilder.CreateSphere("test", {diameter: 0.1}, localPlayer.actor.scene)
+        test.material = enemySphereMaterial;
+        test.position.x = x + transform_x;
+        test.position.y = y + transform_y;
+        test.position.z = z + transform_z + 0.5;
+        console.log({
+            x: x - test.position.x,
+            y: y - test.position.y,
+            z: z - test.position.z
+        })
+        test.renderingGroupId = 1;
+        test.visibility = true;
     }
 }
