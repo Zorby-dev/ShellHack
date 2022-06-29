@@ -47,6 +47,15 @@ export default function inject() {
                             function someFunctionWhichWillNeverBeUsedNow
                         `
                     )
+                    .replace(
+                        /document\.getElementById\("scopeBorder"\)\.style\.display="flex",(\w+)\.viewport\.width=.+\.viewport\.width\}/,
+                        `
+                                document.getElementById("scopeBorder").style.display = "none"
+                                $1.viewport.width = 1
+                                $1.viewport.x = 0
+                            }
+                        `
+                    )
                     /*.replace(/((\w)=JSON\.parse\(\w\.data\))/, (a, b) => {
                         const out = `${a};shellHack.log("WS MESSAGE", ${b})`;
                         return out;
