@@ -97,11 +97,11 @@ export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar,
             localPlayer.team === 0 || localPlayer.team !== player.team
                 ? window.shellHack.enemySphereMaterial
                 : window.shellHack.allySphereMaterial;
-        player.sphere.renderingGroupId = window.shellHack.config.espEnabled
+        player.sphere.renderingGroupId = window.shellHack.config.esp.enabled
             ? 1
             : 0;
         player.sphere.visibility =
-            window.shellHack.config.espEnabled && localPlayer !== player;
+            window.shellHack.config.esp.enabled && localPlayer !== player;
 
         player.ray.visibility = window.shellHack.config.esp.raysEnabled && localPlayer.playing && player.playing && (localPlayer.team === 0 || localPlayer.team !== player.team);
         player.ray.color = new BABYLON.Color3(rainbow.r, rainbow.g, rainbow.b);
