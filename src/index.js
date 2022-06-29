@@ -1,5 +1,5 @@
 import inject from "./injector";
-import { HSVtoRGB } from "./util";
+import { HSBToRGB } from "./util";
 
 class ShellHack {
     static defaultConfig = {
@@ -36,15 +36,15 @@ class ShellHack {
     }
 
     onRender() {
-        window.shellHack.hue = window.shellHack.hue === 1 ? 0 : window.shellHack.hue + 0.01;
+        window.shellHack.hue = window.shellHack.hue === 360 ? 0 : window.shellHack.hue + 1;
     }
 
     getRainbow() {
-        let rgb = HSVtoRGB(window.shellHack.hue, 1, 1);
+        let rgb = HSBToRGB(window.shellHack.hue, 100, 100);
         return {
-            r: rgb.r / 255,
-            g: rgb.g / 255,
-            g: rgb.b / 255
+            r: rgb[0] / 255,
+            g: rgb[1] / 255,
+            b: rgb[2] / 255
         }
     }
 }
