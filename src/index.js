@@ -262,18 +262,21 @@ class HackSettings {
             const title = document.createElement("span")
             title.className = "category " + category
             let config = this.layout[category].config
-            const enabled = toggle(config.enabled)
-            title.innerHTML = `${this.layout[category].name} - <button class="${enabled}">${enabled}</button>`
 
-            title.querySelector("button").addEventListener("click", () => {
-                config.enabled =
-                    !config.enabled;
-                window.shellHack.update();
-            })
+            if (config.enabled != null) {
+                const enabled = toggle(config.enabled)
+                title.innerHTML = `${this.layout[category].name} - <button class="${enabled}">${enabled}</button>`
+
+                title.querySelector("button").addEventListener("click", () => {
+                    config.enabled =
+                        !config.enabled;
+                    window.shellHack.update();
+                })
+            } else {
+                title.innerHTML = `${this.layout[category].name}`
+            }
 
             settings.appendChild(title)
-
-            console.log(config)
 
             const settingsList = document.createElement("ul")
             settingsList.className = "config " + category
@@ -320,10 +323,12 @@ class HackSettings {
         
         for (const category of settings.querySelectorAll(".category")) {
             const categoryName = category.classList.item(1)
-            const categoryEnabled = toggle(this.layout[categoryName].config.enabled)
-            const enabledButton = category.querySelector("button")
-            enabledButton.innerText = categoryEnabled
-            enabledButton.className = categoryEnabled
+            if (this.layout[categoryName].config.enabled != null) {
+                const categoryEnabled = toggle(this.layout[categoryName].config.enabled)
+                const enabledButton = category.querySelector("button")
+                enabledButton.innerText = categoryEnabled
+                enabledButton.className = categoryEnabled
+            }
         }
 
         for (const config of settings.querySelectorAll(".config")) {
