@@ -48,11 +48,16 @@ export default function inject() {
                         `
                     )
                     .replace(
-                        /document\.getElementById\("scopeBorder"\)\.style\.display="flex",(\w+)\.viewport\.width=.+\.viewport\.width\}/,
+                        /(document\.getElementById\("scopeBorder"\)\.style\.display="flex",(\w+)\.viewport\.width=.+\.viewport\.width)\}/,
                         `
+                            "";
+                            if (window.shellHack.config.general.hideAimingOverlay) {
                                 document.getElementById("scopeBorder").style.display = "none"
-                                $1.viewport.width = 1
-                                $1.viewport.x = 0
+                                $2.viewport.width = 1
+                                $2.viewport.x = 0
+                            } else {
+                                $1
+                            }
                             }
                         `
                     )

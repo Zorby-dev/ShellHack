@@ -11,6 +11,9 @@ class ShellHack {
             rainbowSpheres: false,
             raysEnabled: true,
             rainbowRays: false
+        },
+        general: {
+            hideAimingOverlay: true
         }
     };
 
@@ -195,6 +198,13 @@ class HackSettings {
                     rainbowRays: "Rainbow rays"
                 },
                 config: window.shellHack.config.esp
+            },
+            general: {
+                name: "General",
+                names: {
+                    hideAimingOverlay: "Hide aiming overlay"
+                },
+                config: window.shellHack.config.general
             }
         }
 
