@@ -13,7 +13,7 @@ export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar,
 
     let rainbow = window.shellHack.getRainbow();
     enemySphereMaterial.emissiveColor = enemySphereMaterial.diffuseColor =
-        new BABYLON.Color3(rainbow.r, rainbow.g, rainbow.b);
+        window.shellHack.config.esp.rainbowSpheres ? new BABYLON.Color3(rainbow.r, rainbow.g, rainbow.b) : new BABYLON.Color3(1,0,0);
     enemySphereMaterial.wireframe = true;
     window.shellHack.enemySphereMaterial = enemySphereMaterial;
 
@@ -104,7 +104,7 @@ export default function sceneRenderMixin(playersVar, localPlayerVar, babylonVar,
             window.shellHack.config.esp.enabled && localPlayer !== player;
 
         player.ray.visibility = window.shellHack.config.esp.raysEnabled && localPlayer.playing && player.playing && (localPlayer.team === 0 || localPlayer.team !== player.team);
-        player.ray.color = new BABYLON.Color3(rainbow.r, rainbow.g, rainbow.b);
+        player.ray.color =  window.shellHack.config.esp.rainbowRays ? new BABYLON.Color3(rainbow.r, rainbow.g, rainbow.b) : new BABYLON.Color3(1,0,0);
     }
 
 
